@@ -41,11 +41,11 @@ class dmc:
 
     def __distance_calc(self, coord1, coord2):
         if self.__type_distance_calc == 'euclidean':
-            return self.__euclidean_distance(coord1 - coord2)
+            return self.__euclidean_distance(coord1, coord2)
 
         raise Exception('Distance not implemented')
 
-    def __euclidean_distance(coord1, coord2):
+    def __euclidean_distance(self, coord1, coord2):
         coord1, coord2 = np.array(coord1), np.array(coord2)
 
         distance = np.sqrt(
