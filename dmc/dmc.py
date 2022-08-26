@@ -26,6 +26,9 @@ class dmc:
             })
 
     def predict(self, x):
+        if len(x) != len(self.__centroids[0]['centroid']):
+            raise Exception('Sample invalid')
+
         distance = []   # [[<distance>, {'centroid': <list_centroid>, 'target': <target_centroid>}], ...]
 
         for centroid in self.__centroids:
