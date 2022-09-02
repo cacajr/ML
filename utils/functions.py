@@ -23,3 +23,13 @@ def confusion_matrix(y, y_pred):
             confusion_matrix[line][col] += 1
 
     return confusion_matrix
+
+def confusion_matrix_mean(list):
+    confusion_matrix_mean = pd.DataFrame(list[0])
+
+    for matrix in list[1:]:
+        confusion_matrix_mean += pd.DataFrame(matrix)
+
+    confusion_matrix_mean //= len(list)
+
+    return confusion_matrix_mean
