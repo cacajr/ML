@@ -39,7 +39,7 @@ def standard_deviation(list):
     return np.sqrt(
         np.sum(
             np.power(
-                (np.array(list) - np.sum(list)/len(list)), 
+                np.array(list) - (np.sum(list)/len(list)), 
                 2
             )
         ) / len(list)
