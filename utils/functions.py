@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def confusion_matrix(y, y_pred):
@@ -33,3 +34,13 @@ def confusion_matrix_mean(list):
     confusion_matrix_mean //= len(list)
 
     return confusion_matrix_mean
+
+def standard_deviation(list):
+    return np.sqrt(
+        np.sum(
+            np.power(
+                (np.array(list) - np.sum(list)/len(list)), 
+                2
+            )
+        ) / len(list)
+    )
