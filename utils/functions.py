@@ -23,10 +23,10 @@ def confusion_matrix(y, y_pred):
             col = classes.index[classes == pred][0]   # take the index predict class
             confusion_matrix[line][col] += 1
 
-    return confusion_matrix
+    return pd.DataFrame(confusion_matrix, columns=classes, index=classes)
 
 def confusion_matrix_mean(list):
-    confusion_matrix_mean = pd.DataFrame(list[0])
+    confusion_matrix_mean = list[0].copy()
 
     for matrix in list[1:]:
         confusion_matrix_mean += pd.DataFrame(matrix)
