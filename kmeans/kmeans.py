@@ -53,21 +53,22 @@ class kmeans:
 
                 self.__centroids.loc[len(self.__centroids.index)] = new_centroid
 
-            # update centroids targets ...
-            if len(y) != 0:
-                for cluster in self.__clusters:
-                    self.__centroids_targets.append(
-                        y.loc[cluster.index.values].groupby(
-                            y.loc[cluster.index.values]
-                        ).count().sort_values().index[-1]   # return the target most common in cluster
-                    )
-
             if i < self.__number_iteration - 1: # do not reset cluster in the last iteration
                 # reset clusters ...
                 self.__clusters = [    # separating one cluster for each centroid
                     pd.DataFrame([], columns=self.__X.columns)
                     for _ in self.__centroids.values
                 ]
+
+        # update centroids targets ...
+        if len(y) != 0:
+            for cluster in self.__clusters:
+                if len(cluster) > 0:    # if cluster do not have samples, so jump it
+                    self.__centroids_targets.append(
+                        y.loc[cluster.index.values].groupby(
+                            y.loc[cluster.index.values]
+                        ).count().sort_values().index[-1]   # return the target most common in cluster
+                    )
 
     def predict(self, x):
         if len(x) != len(self.__centroids.values[0]):
