@@ -63,12 +63,14 @@ class kmeans:
         # update centroids targets ...
         if len(y) != 0:
             for cluster in self.__clusters:
-                if len(cluster) > 0:    # if cluster do not have samples, so jump it
+                if len(cluster) > 0:    # if cluster have samples ...
                     self.__centroids_targets.append(
                         y.loc[cluster.index.values].groupby(
                             y.loc[cluster.index.values]
                         ).count().sort_values().index[-1]   # return the target most common in cluster
                     )
+                else:   # if cluster do not have samples, so set any other target
+                    self.__centroids_targets.append('Unknow')
 
     def predict(self, x):
         if len(x) != len(self.__centroids.values[0]):
