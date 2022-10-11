@@ -65,12 +65,3 @@ class naive_bayes_classifier:
                 hits += 1
 
         return hits/y_test.size
-
-Xy = pd.read_csv('./datasets/iris.csv')
-X = Xy.drop(['class'], axis=1)
-y = Xy['class']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
-
-nbc_model = naive_bayes_classifier()
-nbc_model.fit(X_train, y_train)
