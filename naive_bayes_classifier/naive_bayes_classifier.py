@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 # from utils.functions import standard_deviation
-from sklearn.model_selection import train_test_split
 
 
 class naive_bayes_classifier:
@@ -46,12 +45,12 @@ class naive_bayes_classifier:
                 cls
             ])
 
-        biggest_posteriori_class = sorted(
+        greater_posteriori_class = sorted(
             posteriors,
             key=lambda posteriors: posteriors[0] # sorted by posteriori
         )[-1][1]
 
-        return biggest_posteriori_class
+        return greater_posteriori_class
 
     def __gaussian(self, x, mu, sig):
         prob = (1 / (np.sqrt(2 * np.pi) * sig)) * np.exp((-1 / 2) * ((x - mu) / sig)**2)
