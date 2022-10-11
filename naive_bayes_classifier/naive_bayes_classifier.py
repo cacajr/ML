@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 # from utils.functions import standard_deviation
+from sklearn.model_selection import train_test_split
 
 
 class naive_bayes_classifier:
@@ -18,7 +19,7 @@ class naive_bayes_classifier:
         self.__attribute_matrix_mean_std = pd.DataFrame(values, columns=X.columns, index=classes)
 
         for cls in self.__attribute_matrix_mean_std.index.values:
-            i_cls_samples = np.where(y == cls)
+            i_cls_samples = X.index[np.where(y == cls)] # this take the index returned for np and take the pd (X) index
             Xc = X.loc[i_cls_samples]
             self.__priori.append(len(Xc) / len(X))  # insert priori for each group of samples separated per class
 
@@ -64,3 +65,12 @@ class naive_bayes_classifier:
                 hits += 1
 
         return hits/y_test.size
+
+Xy = pd.read_csv('./datasets/iris.csv')
+X = Xy.drop(['class'], axis=1)
+y = Xy['class']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+
+nbc_model = naive_bayes_classifier()
+nbc_model.fit(X_train, y_train)
