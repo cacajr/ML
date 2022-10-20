@@ -38,7 +38,10 @@ class naive_bayes_classifier:
             for i_feature, feature in enumerate(self.__attribute_matrix_mean_std.columns):
                 column_mean = self.__attribute_matrix_mean_std.loc[cls, feature][0]
                 column_std = self.__attribute_matrix_mean_std.loc[cls, feature][1]
-                likelihood = likelihood * self.__gaussian(x[i_feature], column_mean, column_std)
+                if column_std == 0:
+                    likelihood = likelihood * self.__gaussian(x[i_feature], column_mean, 1)
+                else:
+                    likelihood = likelihood * self.__gaussian(x[i_feature], column_mean, column_std)
 
             posteriors.append([
                 likelihood * self.__priori[i_cls], 
