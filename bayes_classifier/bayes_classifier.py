@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from scipy.spatial import distance
-# from utils.functions import standard_deviation
 
 
 class bayes_classifier:
@@ -17,9 +15,14 @@ class bayes_classifier:
         # The class array will save the classes/target
         self.__class_array = []
 
+        # The i will save a matrix with diagonal with values equel to 1 * noise on the main diagonal and 0 on the rest
+        self.__noise_matrix = [[]]
+
     def fit(self, X, y):
         self.__class_array = y.unique()
         self.__feature_array = X.columns
+
+        self.__noise_matrix = np.eye(len(self.__feature_array)) * 1e-10    # creating the noise matrix
 
         for cls in self.__class_array:
             i_cls_samples = X.index[np.where(y == cls)] # this take the index returned for np and take the pd (X) index
@@ -51,10 +54,13 @@ class bayes_classifier:
     def __multivariate_gaussian(self, x, mu, sig):
         det_sig = np.linalg.det(sig)
 
-        if det_sig != 0:
-            prob = 1 / (np.power(2 * np.pi, len(x) / 2) * np.power(det_sig, 1 / 2)) * np.exp((-1 / 2) * np.dot(np.dot((x - mu), np.linalg.inv(sig)), (x - mu)))
-        else:
-            prob = 1 / (np.power(2 * np.pi, len(x) / 2) * 1) * np.exp((-1 / 2) * np.dot(np.dot((x - mu), 1), (x - mu)))
+        if det_sig == 0:    # if det covariance matrix is equal 0, so i use det equal 1 and add noise
+            det_sig = 1
+            sig = sig + self.__noise_matrix
+
+        inv_sig = np.linalg.inv(sig)
+
+        prob = 1 / (np.power(2 * np.pi, len(x) / 2) * np.power(det_sig, 1 / 2)) * np.exp((-1 / 2) * np.dot(np.dot((x - mu), inv_sig), (x - mu)))
         
         return prob
 
