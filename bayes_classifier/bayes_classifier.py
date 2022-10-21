@@ -49,7 +49,13 @@ class bayes_classifier:
         return greater_posteriori_class
 
     def __multivariate_gaussian(self, x, mu, sig):
-        prob = 1 / (np.power(2 * np.pi, len(x) / 2) * np.power(np.linalg.det(sig), 1 / 2)) * np.exp(-1 / 2 * np.dot(np.dot((x - mu), np.linalg.inv(sig)), (x - mu)))
+        det_sig = np.linalg.det(sig)
+
+        if det_sig != 0:
+            prob = 1 / (np.power(2 * np.pi, len(x) / 2) * np.power(det_sig, 1 / 2)) * np.exp((-1 / 2) * np.dot(np.dot((x - mu), np.linalg.inv(sig)), (x - mu)))
+        else:
+            prob = 1 / (np.power(2 * np.pi, len(x) / 2) * 1) * np.exp((-1 / 2) * np.dot(np.dot((x - mu), 1), (x - mu)))
+        
         return prob
 
     def score(self, X_test, y_test):
