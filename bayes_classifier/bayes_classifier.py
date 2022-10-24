@@ -15,8 +15,11 @@ class bayes_classifier:
         # The class array will save the classes/target
         self.__class_array = []
 
-        # The i will save a matrix with diagonal with values equel to 1 * noise on the main diagonal and 0 on the rest
+        # The noise matrix will save a matrix with diagonal with values equel to 1 * noise on the main diagonal and 0 on the rest
         self.__noise_matrix = [[]]
+
+        # will save the priori for each class
+        self.__priori = []  # [<priori_class_1>, <priori_class_2>, ...]
 
     def fit(self, X, y):
         self.__class_array = y.unique()
@@ -27,6 +30,8 @@ class bayes_classifier:
         for cls in self.__class_array:
             i_cls_samples = X.index[np.where(y == cls)] # this take the index returned for np and take the pd (X) index
             Xc = X.loc[i_cls_samples]
+            self.__priori.append(len(Xc) / len(X))  # insert priori for each group of samples separated per class
+
             self.__covariance_matrix_list.append(pd.DataFrame(np.cov(Xc, rowvar=False)))
             self.__mean_list.append(np.array([Xc[feat].mean() for feat in self.__feature_array]))
     
@@ -37,10 +42,10 @@ class bayes_classifier:
         posteriors = [] # [[<posteriori>, <class>], ...]
 
         for i_cls, cls in enumerate(self.__class_array):
-            prob = self.__multivariate_gaussian(x, self.__mean_list[i_cls], self.__covariance_matrix_list[i_cls])
+            likelihood = self.__multivariate_gaussian(x, self.__mean_list[i_cls], self.__covariance_matrix_list[i_cls])
 
             posteriors.append([
-                prob,
+                likelihood * self.__priori[i_cls],
                 cls
             ])
 
