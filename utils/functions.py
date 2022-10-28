@@ -2,6 +2,14 @@ import pandas as pd
 import numpy as np
 
 
+def min_max_normalization(X):
+    X_norm = X.copy()
+
+    for column in X_norm.columns:
+        X_norm[column] = (X_norm[column] - np.min(X_norm[column])) / (np.max(X_norm[column]) - np.min(X_norm[column]))
+
+    return X_norm
+
 def confusion_matrix(y, y_pred):
     y = pd.Series(y)
     classes = pd.Series(y.unique())
