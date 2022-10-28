@@ -9,20 +9,19 @@ class dmc:
         self.__centroids = [] # [{'centroid': <list_centroid>, 'target': <target_centroid>}, ...]
 
     def fit(self, X, y):
-        targets = y.unique()
+        classes = pd.Series(y.unique())
 
-        Xy = pd.concat([X, y], axis=1)
-
-        for target in targets:
-            X_target = Xy[Xy[Xy.columns[-1]].isin([target])]   # return DataFrame with the samples with the especific target
+        for cls in classes:
+            i_cls_samples = X.index[np.where(y == cls)] # this take the index returned for np and take the pd (X) index
+            Xc = X.loc[i_cls_samples]
 
             centroid = []
-            for column in X.columns:
-                centroid.append(X_target[column].mean())
+            for feature in Xc.columns:
+                centroid.append(Xc[feature].mean())
 
             self.__centroids.append({
                 'centroid': centroid,
-                'target': target,
+                'target': cls,
             })
 
     def predict(self, x):
