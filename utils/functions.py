@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import scipy
+import seaborn as sns
 
 
 def min_max_normalization(X):
@@ -52,3 +55,17 @@ def standard_deviation(list):
             )
         ) / len(list)
     )
+
+def plot_column_histogram_and_distribution(column, feature_name, distr_name):
+    distribution = getattr(scipy.stats, distr_name)
+    distri_params = distribution.fit(column)
+    new_distr = distribution(*distri_params)
+
+    # generate a range(0, 1, 100) numbers
+    x = np.linspace(0, 1, 100)
+    _, ax = plt.subplots(1, 2)
+
+    plt.suptitle(feature_name + ' - ' + distr_name)
+    sns.histplot(x=column, ax=ax[0])
+    sns.lineplot(x=x, y=new_distr.pdf(x), ax=ax[1])
+    plt.show()
