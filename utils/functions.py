@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 import seaborn as sns
+import random
 
 
 def min_max_normalization(X):
@@ -69,3 +70,52 @@ def plot_column_histogram_and_distribution(column, feature_name, distr_name):
     sns.histplot(x=column, ax=ax[0])
     sns.lineplot(x=x, y=new_distr.pdf(x), ax=ax[1])
     plt.show()
+
+def create_samples_rejection_method(X, y, qtd_per_class={}, distributions=[], distributions_method=[]):
+    if len(qtd_per_class.keys()) == 0:
+        qtd_per_class = {key: 10 for key in y.unique()}
+    elif len(qtd_per_class.keys()) != len(y.unique()):
+        raise Exception('Quantity per class size is different number of classes')
+
+    if len(distributions) == 0:
+        distributions = ['norm' for _ in range(len(X.columns))]
+    elif len(distributions) != len(X.columns):
+        raise Exception('Distributions size is different X columns size')
+
+    if len(distributions_method) == 0:
+        distributions_method = ['norm' for _ in range(len(X.columns))]
+    elif len(distributions_method) != len(X.columns):
+        raise Exception('Distributions method size is different X columns size')
+
+    new_X = X.copy()
+    new_y = y.copy()
+    classes = y.unique()
+
+    for cls in classes:
+        i_cls_samples = new_X.index[np.where(y == cls)] # this take the index returned for np and take the pd (X) index
+        Xc = new_X.loc[i_cls_samples] 
+
+        for _ in range(qtd_per_class[cls]):
+            new_sample = []
+
+            for i_feature, feature in enumerate(new_X.columns):
+                distribution = getattr(scipy.stats, distributions[i_feature])
+                distr_params = distribution.fit(Xc[feature])
+                new_distr = distribution(*distr_params)
+
+                distribution_method = getattr(scipy.stats, distributions_method[i_feature])
+                distr_params_method = distribution_method.fit(Xc[feature])
+                new_distr_method = distribution_method(*distr_params_method)
+
+                while True:
+                    rand_value = random.randint(0, 100) / 100
+                    new_sample_attribute = random.randint(0, 100) / 100
+
+                    if new_distr_method.pdf(new_sample_attribute) * rand_value < new_distr.pdf(new_sample_attribute):
+                        new_sample.append(new_sample_attribute)
+                        break
+
+            new_X.loc[new_X.index.size] = new_sample
+            new_y.loc[new_y.size] = cls
+
+    return new_X, new_y
