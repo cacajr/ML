@@ -119,3 +119,20 @@ def create_samples_rejection_method(X, y, qtd_per_class={}, distributions=[], di
             new_y.loc[new_y.size] = cls
 
     return new_X, new_y
+
+def remove_values_randomly(X, qtd_values=10, value_replace='?'):
+    new_X = X.copy()
+    columns = new_X.columns
+
+    for _ in range(qtd_values):
+        i_sample = random.randint(0, new_X.index.size - 1)
+        i_attribute = random.randint(0, new_X.columns.size - 1)
+
+        
+        while new_X.loc[i_sample, columns[i_attribute]] == value_replace:
+            i_sample = random.randint(0, new_X.index.size - 1)
+            i_attribute = random.randint(0, new_X.columns.size - 1)
+
+        new_X.loc[i_sample, columns[i_attribute]] = value_replace
+
+    return new_X
